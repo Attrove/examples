@@ -1,0 +1,20 @@
+You are working on a daily comms digest using the Attrove SDK (~100 lines).
+
+Tech stack: TypeScript, Node.js 18+, ES modules, @attrove/sdk, resend (optional).
+
+SDK rules:
+- Always use @attrove/sdk — never raw fetch
+- Available methods: query(), search(), events.list(), meetings.list(), integrations.list()
+- brief(), entity(), thread() DO NOT EXIST — they will cause compile errors
+- ATTROVE_USER_TOKEN is an sk_ token (per-user), NOT the attrove_ partner API key
+- The SDK defaults to https://api.attrove.com — no baseUrl needed
+
+This example uses events.list(), search(), and query() in parallel via Promise.all to:
+1. Fetch today's calendar events
+2. Search for recent action items and decisions
+3. Generate an AI digest
+
+Key patterns:
+- event.attendees may be a JSON string, not an array. Use the toArray() helper.
+- --send flag sends the digest via Resend email (optional, requires RESEND_API_KEY and SEND_TO env vars)
+- Designed for cron/scheduled execution

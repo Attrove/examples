@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - '.github/workflows/ci.yml'
+
+jobs:
+  test-node:
+    name: Test Node.js Example
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Run unit tests
+        run: npm test
+
+  # Integration tests run against real API with test credentials
+  # Only runs on main branch pushes (not PRs) to protect secrets
+  integration-test:
+    name: Integration Test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run integration tests
+        env:
+          ATTROVE_CLIENT_ID: ${{ secrets.ATTROVE_TEST_CLIENT_ID }}
+          ATTROVE_CLIENT_SECRET: ${{ secrets.ATTROVE_TEST_CLIENT_SECRET }}
+        run: npm run test:integration

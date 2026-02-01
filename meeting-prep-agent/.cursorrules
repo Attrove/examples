@@ -1,0 +1,18 @@
+You are working on an AI meeting prep agent using the Attrove SDK (~80 lines).
+
+Tech stack: TypeScript, Node.js 18+, ES modules, @attrove/sdk.
+
+SDK rules:
+- Always use @attrove/sdk — never raw fetch
+- Available methods: query(), search(), events.list(), meetings.list(), integrations.list()
+- brief(), entity(), thread() DO NOT EXIST — they will cause compile errors
+- ATTROVE_USER_TOKEN is an sk_ token (per-user), NOT the attrove_ partner API key
+- The SDK defaults to https://api.attrove.com — no baseUrl needed
+
+This example uses events.list(), meetings.list(), and query() to:
+1. Fetch upcoming calendar events with attendees
+2. Find past meetings with the same people
+3. Generate a prep brief via RAG
+
+Key pattern: event.attendees may be a JSON string, not an array. Use the toArray() helper.
+Keep the example focused. Do not add provisioning — see ../quickstart for that.

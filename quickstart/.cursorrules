@@ -1,0 +1,20 @@
+You are working on the Attrove quickstart — the full B2B2B provisioning flow.
+
+Tech stack: TypeScript, Node.js 18+, ES modules, @attrove/sdk, vitest.
+
+SDK rules:
+- Always use @attrove/sdk — never raw fetch
+- Server-side: Attrove.admin({ clientId, clientSecret }) for provisioning
+- Client-side: new Attrove({ apiKey, userId }) for queries
+- brief(), entity(), thread() DO NOT EXIST — they will cause compile errors
+- The SDK defaults to https://api.attrove.com — no baseUrl needed
+
+Authentication flow:
+1. Partner uses client_id + client_secret to create users
+2. admin.users.create() returns sk_ API key per user
+3. admin.users.createConnectToken() returns pit_ token (10 min, single-use)
+4. User visits connect URL to authorize Gmail/Slack/etc via OAuth
+5. Partner queries user data with sk_ token
+
+This example has a --demo flag that shows mock output without credentials.
+Environment: ATTROVE_CLIENT_ID + ATTROVE_CLIENT_SECRET (partner credentials, not user tokens).

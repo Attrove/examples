@@ -1,0 +1,24 @@
+{
+  "name": "attrove-meeting-prep-agent",
+  "version": "1.0.0",
+  "description": "AI agent that preps you for your next meeting using real email, Slack, and calendar context",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@attrove/sdk": "^0.1.8",
+    "dotenv": "^16.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

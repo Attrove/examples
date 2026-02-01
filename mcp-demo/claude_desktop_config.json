@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "attrove": {
+      "command": "npx",
+      "args": ["@attrove/mcp"],
+      "env": {
+        "ATTROVE_API_KEY": "sk_your_user_token_here",
+        "ATTROVE_USER_ID": "your-user-uuid-here"
+      }
+    }
+  }
+}

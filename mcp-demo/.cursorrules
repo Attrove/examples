@@ -1,0 +1,13 @@
+This is a zero-code example — config files and documentation only. No source code.
+
+It shows how to connect Claude Desktop, Cursor, ChatGPT, and Claude Code to Attrove via MCP.
+
+Two connection methods:
+1. HTTP (Claude Desktop, ChatGPT): connect to https://api.attrove.com/mcp — OAuth is automatic
+2. Stdio (Cursor, Claude Code): npx @attrove/mcp with ATTROVE_API_KEY (sk_ token) and ATTROVE_USER_ID env vars
+
+MCP has 5 tools: attrove_query, attrove_search, attrove_integrations, attrove_events, attrove_meetings.
+There is NO attrove_brief tool.
+
+Access scope: MCP connectors let you query YOUR OWN account only — not end users' data.
+For querying users' data programmatically, use the SDK with B2B2B provisioning (see ../quickstart).
