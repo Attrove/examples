@@ -12,13 +12,23 @@ triggers:
   - "outlook calendar api"
   - "rag api"
   - "plaid for productivity"
-version: "0.1.8" # Keep in sync with packages/mcp/package.json and packages/mcp/server.json
+  - "unified inbox api"
+  - "email api typescript"
+  - "slack api aggregation"
+  - "ai meeting prep"
+  - "email search api"
+  - "mcp email"
+  - "mcp slack"
+  - "mcp calendar"
+  - "connect slack gmail api"
+  - "communication context api"
+version: "0.1.10" # Keep in sync with packages/mcp/package.json and packages/mcp/server.json
 author: "Attrove <support@attrove.com>"
 homepage: "https://docs.attrove.com"
 repository: "https://github.com/attrove/attrove-js"
 ---
 
-<!-- Source of truth for LLM-facing docs (authentication, SDK methods, MCP tools, error handling). Keep in sync with: apps/web-landing/public/llms.txt, scripts/examples-AGENTS.md, scripts/examples-root-README.md. Each file adds context-specific content (examples table, flow diagrams, etc.) but core SDK/MCP sections must match. -->
+<!-- Source of truth for LLM-facing docs (authentication, SDK methods, MCP tools, error handling). Keep in sync with: apps/web-landing/public/llms.txt, apps/web-landing/public/llms-full.txt, scripts/examples-AGENTS.md, scripts/examples-root-README.md. Each file adds context-specific content (examples table, flow diagrams, etc.) but core SDK/MCP sections must match. -->
 # Attrove
 
 > Attrove is Plaid for productivity apps. Connect your users' Gmail, Slack, Google Calendar, Outlook, and Google Meet — then query their data with natural language via a single API call. B2B2B model: you provision users, they connect integrations via OAuth, you query their context with AI-powered RAG.

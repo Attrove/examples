@@ -10,7 +10,7 @@
     "dev": "tsx src/index.ts"
   },
   "dependencies": {
-    "@attrove/sdk": "^0.1.8",
+    "@attrove/sdk": "^0.1.10",
     "dotenv": "^16.6.1"
   },
   "optionalDependencies": {
