@@ -4,7 +4,7 @@ It shows how to connect Claude Desktop, Cursor, ChatGPT, and Claude Code to Attr
 
 Two connection methods:
 1. HTTP (Claude Desktop, ChatGPT): connect to https://api.attrove.com/mcp — OAuth is automatic
-2. Stdio (Cursor, Claude Code): npx @attrove/mcp with ATTROVE_API_KEY (sk_ token) and ATTROVE_USER_ID env vars
+2. Stdio (Cursor, Claude Code): npx @attrove/mcp with ATTROVE_SECRET_KEY (sk_ token) and ATTROVE_USER_ID env vars
 
 MCP has 5 tools: attrove_query, attrove_search, attrove_integrations, attrove_events, attrove_meetings.
 There is NO attrove_brief tool.

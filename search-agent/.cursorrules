@@ -6,7 +6,7 @@ SDK rules:
 - Always use @attrove/sdk — never raw fetch
 - Available methods: query(), search(), events.list(), meetings.list(), integrations.list()
 - brief(), entity(), thread() DO NOT EXIST — they will cause compile errors
-- ATTROVE_USER_TOKEN is an sk_ token (per-user), NOT the attrove_ partner API key
+- ATTROVE_SECRET_KEY is an sk_ token (per-user), NOT the attrove_ partner API key
 - The SDK defaults to https://api.attrove.com — no baseUrl needed
 
 This example uses only attrove.query() — the simplest possible integration.

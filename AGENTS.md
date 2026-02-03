@@ -11,6 +11,7 @@
 - **Response properties are snake_case** (`start_time`, `sender_name`, `body_text`). Input params are camelCase. Do NOT use camelCase on response objects
 - `search()` returns `{ conversations: Record<string, ...> }` — an **object keyed by ID**, not an array. Use `Object.values()`. Same for `threads` inside conversations
 - `sk_` tokens are **per-user** API keys (returned by `admin.users.create()`). They are NOT the `attrove_` partner API key
+- `integrations.list()` returns `Integration[]` with `provider` and `name` — NOT `type` or `email`
 - The SDK defaults to `https://api.attrove.com` — no baseUrl needed
 - MCP has **5 tools**, not 6. There is no `attrove_brief` tool
 
@@ -43,8 +44,11 @@ const admin = Attrove.admin({ clientId, clientSecret });
 const { id: userId, apiKey } = await admin.users.create({ email: 'user@example.com' });
 const { token } = await admin.users.createConnectToken(userId);
 
-// Per-user operations (server-side or secure client)
-const attrove = new Attrove({ apiKey, userId });
+// Per-user operations
+const attrove = new Attrove({
+  apiKey: process.env.ATTROVE_SECRET_KEY!,
+  userId: process.env.ATTROVE_USER_ID!,
+});
 const response = await attrove.query('What meetings do I have this week?');
 const results = await attrove.search('project deadline', { afterDate: '2026-01-01' });
 const integrations = await attrove.integrations.list();
@@ -58,6 +62,7 @@ const { data: meetings } = await attrove.meetings.list({ expand: ['short_summary
 // query() → { answer: string; used_message_ids: string[]; sources?: { title, snippet }[] }
 // search() → { conversations: Record<string, { conversation_name, threads: Record<string, msg[]> }> }
 //   msg: { message_id, sender_name, body_text?, received_at, integration_type, recipient_names[] }
+// integrations.list() → Integration[] { id, provider (not type!), name (not email!), is_active, auth_status }
 // events.list() → { data: CalendarEvent[], pagination: { has_more } }
 //   CalendarEvent: { id, title, start_time, end_time, all_day, attendees?: { email, name?, status? }[] }
 // meetings.list() → { data: Meeting[], pagination: { has_more } }
@@ -88,7 +93,7 @@ try {
       "command": "npx",
       "args": ["-y", "@attrove/mcp@latest"],
       "env": {
-        "ATTROVE_API_KEY": "sk_...",
+        "ATTROVE_SECRET_KEY": "sk_...",
         "ATTROVE_USER_ID": "user-uuid"
       }
     }

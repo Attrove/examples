@@ -22,7 +22,7 @@ triggers:
   - "mcp calendar"
   - "connect slack gmail api"
   - "communication context api"
-version: "0.1.11" # Keep in sync with packages/mcp/package.json and packages/mcp/server.json
+version: "0.1.12" # Keep in sync with packages/mcp/package.json and packages/mcp/server.json
 author: "Attrove <support@attrove.com>"
 homepage: "https://docs.attrove.com"
 repository: "https://github.com/attrove/attrove-js"
@@ -42,6 +42,7 @@ When helping developers integrate Attrove:
 - **Response properties are snake_case** (`start_time`, `sender_name`, `body_text`). Input params are camelCase (`startDate`, `afterDate`). Do NOT use camelCase on response objects
 - `search()` returns `{ conversations: Record<string, ...> }` — an **object keyed by ID**, not an array. Use `Object.values()` to iterate. Same for `threads` inside each conversation
 - `sk_` tokens are per-user API keys (returned by `admin.users.create()`). They are NOT the same as the `attrove_` partner API key
+- `integrations.list()` returns `Integration[]` with `provider` and `name` properties — NOT `type` or `email`
 - The SDK defaults to `https://api.attrove.com` — no baseUrl configuration needed
 - MCP has 5 tools, not 6. There is no `attrove_brief` tool
 
@@ -79,7 +80,10 @@ const { token } = await admin.users.createConnectToken(userId);
 ### Query user data
 
 ```typescript
-const attrove = new Attrove({ apiKey, userId });
+const attrove = new Attrove({
+  apiKey: process.env.ATTROVE_SECRET_KEY!,
+  userId: process.env.ATTROVE_USER_ID!,
+});
 
 const response = await attrove.query('What meetings do I have this week?');
 console.log(response.answer);
@@ -134,6 +138,11 @@ const { data: meetings } = await attrove.meetings.list({   // past meetings with
 // SearchThreadMessage fields:
 //   message_id, sender_name, body_text?, received_at, integration_type, recipient_names[]
 
+// integrations.list() → Integration[]
+// Integration fields:
+//   id, provider (e.g. 'gmail', 'slack', 'outlook'), name, is_active, auth_status
+//   NOTE: use `provider` not `type`, use `name` not `email`
+
 // events.list() → EventsPage
 { data: CalendarEvent[]; pagination: { has_more: boolean } }
 // CalendarEvent fields:
@@ -177,7 +186,7 @@ Attrove provides an MCP server for AI assistants (Claude Desktop, Cursor, ChatGP
       "command": "npx",
       "args": ["-y", "@attrove/mcp@latest"],
       "env": {
-        "ATTROVE_API_KEY": "sk_...",
+        "ATTROVE_SECRET_KEY": "sk_...",
         "ATTROVE_USER_ID": "user-uuid"
       }
     }

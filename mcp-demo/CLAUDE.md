@@ -27,7 +27,7 @@ There is no `attrove_brief` tool. The `brief()` SDK method is not yet implemente
 ### Stdio transport (Cursor, Claude Code)
 - Command: `npx @attrove/mcp`
 - Requires two env vars:
-  - `ATTROVE_API_KEY` — the `sk_...` user token (the MCP package names this "API_KEY" but it is the per-user token, NOT the `attrove_` API key)
+  - `ATTROVE_SECRET_KEY` — the `sk_...` per-user secret key (not the partner `client_id`/`client_secret`)
   - `ATTROVE_USER_ID` — user UUID
 
 ```json
@@ -37,7 +37,7 @@ There is no `attrove_brief` tool. The `brief()` SDK method is not yet implemente
       "command": "npx",
       "args": ["@attrove/mcp"],
       "env": {
-        "ATTROVE_API_KEY": "sk_...",
+        "ATTROVE_SECRET_KEY": "sk_...",
         "ATTROVE_USER_ID": "user-uuid"
       }
     }

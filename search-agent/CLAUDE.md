@@ -27,5 +27,5 @@ console.log(`Based on ${response.used_message_ids.length} messages`);
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ATTROVE_USER_TOKEN` | Yes | User token (`sk_...` prefix). NOT the `attrove_` API key. |
+| `ATTROVE_SECRET_KEY` | Yes | User token (`sk_...` prefix). NOT the `attrove_` API key. |
 | `ATTROVE_USER_ID` | Yes | User UUID |

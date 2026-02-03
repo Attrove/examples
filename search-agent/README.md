@@ -7,7 +7,7 @@ Ask your comms anything in ~65 lines of TypeScript. One API call.
 ```bash
 npm install
 cp .env.example .env
-# Add your ATTROVE_USER_TOKEN (sk_ prefix) and ATTROVE_USER_ID
+# Add your ATTROVE_SECRET_KEY (sk_ prefix) and ATTROVE_USER_ID
 ```
 
 ## Run

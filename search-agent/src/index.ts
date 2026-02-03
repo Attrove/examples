@@ -16,18 +16,18 @@ import {
   isAttroveError,
 } from "@attrove/sdk";
 
-const userToken = process.env.ATTROVE_USER_TOKEN;
+const secretKey = process.env.ATTROVE_SECRET_KEY;
 const userId = process.env.ATTROVE_USER_ID;
 const query = process.argv.slice(2).join(" ") || "important updates this week";
 
-if (!userToken || !userId) {
-  console.error("Missing ATTROVE_USER_TOKEN or ATTROVE_USER_ID.");
+if (!secretKey || !userId) {
+  console.error("Missing ATTROVE_SECRET_KEY or ATTROVE_USER_ID.");
   console.error("Copy .env.example to .env and add your credentials.");
-  console.error("Note: ATTROVE_USER_TOKEN is the sk_ user token, not your attrove_ API key.");
+  console.error("Note: ATTROVE_SECRET_KEY is the sk_ per-user key, not your partner client_id/client_secret.");
   process.exit(1);
 }
 
-const attrove = new Attrove({ apiKey: userToken as ApiKeyFormat, userId });
+const attrove = new Attrove({ apiKey: secretKey as ApiKeyFormat, userId });
 
 async function main(): Promise<void> {
   console.log(`Q: ${query}\n`);
@@ -49,7 +49,7 @@ async function main(): Promise<void> {
 main().catch((err: unknown) => {
   if (err instanceof AuthenticationError) {
     console.error("Authentication Error:", err.message);
-    console.error("  Check your ATTROVE_USER_TOKEN — get it from admin.users.create()");
+    console.error("  Check your ATTROVE_SECRET_KEY — get it from admin.users.create()");
   } else if (err instanceof RateLimitError) {
     console.error("Rate Limited:", err.message);
     const waitTime = err.retryAfter ?? 60;

@@ -49,7 +49,7 @@ The `--send` flag uses [Resend](https://resend.com) to send the digest via email
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ATTROVE_USER_TOKEN` | Yes | User token (`sk_...` prefix). NOT the `attrove_` API key. |
+| `ATTROVE_SECRET_KEY` | Yes | User token (`sk_...` prefix). NOT the `attrove_` API key. |
 | `ATTROVE_USER_ID` | Yes | User UUID |
 | `RESEND_API_KEY` | No | Resend API key (for `--send`) |
 | `SEND_TO` | No | Email recipient (for `--send`) |

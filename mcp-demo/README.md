@@ -61,7 +61,7 @@ Cursor uses the local stdio transport. Add this to your Cursor MCP config:
       "command": "npx",
       "args": ["@attrove/mcp"],
       "env": {
-        "ATTROVE_API_KEY": "sk_...",
+        "ATTROVE_SECRET_KEY": "sk_...",
         "ATTROVE_USER_ID": "your-user-uuid"
       }
     }
@@ -69,20 +69,20 @@ Cursor uses the local stdio transport. Add this to your Cursor MCP config:
 }
 ```
 
-> **Note:** The stdio transport requires your `sk_` user token and user ID as env vars. The env var is named `ATTROVE_API_KEY` by the MCP package, but the value is your per-user `sk_` token — **not** your `attrove_` API key.
+> **Note:** The stdio transport requires your `sk_` user token and user ID as env vars. The env var is named `ATTROVE_SECRET_KEY` by the MCP package, but the value is your per-user `sk_` token — **not** your `attrove_` API key.
 
 4. Restart Cursor
 
 ## Setup: Claude Code (Terminal)
 
 ```bash
-export ATTROVE_API_KEY="sk_..."
+export ATTROVE_SECRET_KEY="sk_..."
 export ATTROVE_USER_ID="your-user-uuid"
 ```
 
 Then ask Claude Code questions about your email, Slack, and calendar directly.
 
-> Same note as Cursor: `ATTROVE_API_KEY` expects the `sk_` user token.
+> Same note as Cursor: `ATTROVE_SECRET_KEY` expects the `sk_` user token.
 
 ## Try these prompts
 

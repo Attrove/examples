@@ -20,7 +20,7 @@ Edit `.env` with your credentials:
 
 ```bash
 # User token (sk_ prefix) — NOT your attrove_ API key
-ATTROVE_USER_TOKEN=sk_...
+ATTROVE_SECRET_KEY=sk_...
 ATTROVE_USER_ID=your-user-uuid
 ```
 
