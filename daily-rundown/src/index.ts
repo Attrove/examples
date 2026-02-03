@@ -31,11 +31,17 @@ if (!userToken || !userId) {
 
 const attrove = new Attrove({ apiKey: userToken as ApiKeyFormat, userId });
 
+/** Format a Date as YYYY-MM-DD in local timezone (not UTC). */
+function formatLocalDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 async function main(): Promise<void> {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const endOfDay = new Date(today);
-  endOfDay.setHours(23, 59, 59, 999);
 
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
@@ -50,12 +56,12 @@ async function main(): Promise<void> {
   // Fetch today's calendar, recent threads, and generate digest in parallel
   const [eventsSettled, searchSettled, digestSettled] = await Promise.allSettled([
     attrove.events.list({
-      startDate: today.toISOString(),
-      endDate: endOfDay.toISOString(),
+      startDate: formatLocalDate(today),
+      endDate: formatLocalDate(today),
       expand: ["attendees"],
     }),
     attrove.search("action items OR decisions OR follow up OR deadline", {
-      afterDate: yesterday.toISOString(),
+      afterDate: formatLocalDate(yesterday),
       includeBodyText: true,
     }),
     attrove.query(

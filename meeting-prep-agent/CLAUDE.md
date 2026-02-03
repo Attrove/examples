@@ -23,8 +23,8 @@ Only working SDK methods are used (no stubbed methods):
 ```typescript
 // Events with attendee expansion
 const { data: events } = await attrove.events.list({
-  startDate: new Date().toISOString(),
-  endDate: tomorrow.toISOString(),
+  startDate: new Date().toISOString().split('T')[0],
+  endDate: tomorrow.toISOString().split('T')[0],
   expand: ["attendees", "description"],
 });
 

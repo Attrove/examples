@@ -84,6 +84,8 @@ await attrove.integrations.list();             // Connected services
 
 **Methods that do NOT exist:** `brief()`, `entity()`, `thread()` — these will cause compile errors.
 
+**Response properties are snake_case** (e.g., `start_time`, `sender_name`, `body_text`). Input params are camelCase. `search()` returns conversations as a `Record<string, ...>` (object), not an array — use `Object.values()` to iterate.
+
 ## MCP Server
 
 The [`mcp-demo/`](./mcp-demo) example shows zero-code setup. For programmatic usage:

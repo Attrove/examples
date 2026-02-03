@@ -60,8 +60,8 @@ Based on recent communications:
 ```typescript
 // Fetch upcoming events with attendee details
 const { data: events } = await attrove.events.list({
-  startDate: new Date().toISOString(),
-  endDate: tomorrow.toISOString(),
+  startDate: new Date().toISOString().split('T')[0],
+  endDate: tomorrow.toISOString().split('T')[0],
   expand: ["attendees", "description"],
 });
 

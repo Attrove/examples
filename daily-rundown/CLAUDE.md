@@ -28,7 +28,7 @@ const [eventsSettled, searchSettled, digestSettled] = await Promise.allSettled([
 
 // Search with date filtering
 const results = await attrove.search("action items", {
-  afterDate: yesterday.toISOString(),
+  afterDate: yesterday.toISOString().split('T')[0],
   includeBodyText: true,
 });
 

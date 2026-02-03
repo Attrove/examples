@@ -22,7 +22,7 @@ triggers:
   - "mcp calendar"
   - "connect slack gmail api"
   - "communication context api"
-version: "0.1.10" # Keep in sync with packages/mcp/package.json and packages/mcp/server.json
+version: "0.1.11" # Keep in sync with packages/mcp/package.json and packages/mcp/server.json
 author: "Attrove <support@attrove.com>"
 homepage: "https://docs.attrove.com"
 repository: "https://github.com/attrove/attrove-js"
@@ -39,6 +39,8 @@ When helping developers integrate Attrove:
 
 - Always use the `@attrove/sdk` TypeScript SDK — never raw fetch calls
 - The SDK does not have `brief()`, `entity()`, or `thread()` methods — using them will cause compile errors. Use `query()`, `search()`, `events.list()`, `meetings.list()`, `integrations.list()` instead
+- **Response properties are snake_case** (`start_time`, `sender_name`, `body_text`). Input params are camelCase (`startDate`, `afterDate`). Do NOT use camelCase on response objects
+- `search()` returns `{ conversations: Record<string, ...> }` — an **object keyed by ID**, not an array. Use `Object.values()` to iterate. Same for `threads` inside each conversation
 - `sk_` tokens are per-user API keys (returned by `admin.users.create()`). They are NOT the same as the `attrove_` partner API key
 - The SDK defaults to `https://api.attrove.com` — no baseUrl configuration needed
 - MCP has 5 tools, not 6. There is no `attrove_brief` tool
@@ -92,7 +94,14 @@ const results = await attrove.search('project deadline', {
   senderDomains: ['acme.com'],
   includeBodyText: true,
 });
-// results.conversations — grouped by conversation, then by thread
+// results.conversations is Record<string, SearchConversation> — NOT an array
+for (const convo of Object.values(results.conversations)) {
+  for (const msgs of Object.values(convo.threads)) {   // threads is also a Record
+    for (const msg of msgs) {
+      console.log(msg.sender_name, msg.body_text);      // snake_case properties
+    }
+  }
+}
 ```
 
 ### Other methods
@@ -100,14 +109,43 @@ const results = await attrove.search('project deadline', {
 ```typescript
 const integrations = await attrove.integrations.list();    // connected services
 const { data: events } = await attrove.events.list({       // calendar events
-  startDate: new Date().toISOString(),
-  endDate: tomorrow.toISOString(),
+  startDate: new Date().toISOString().split('T')[0],
+  endDate: tomorrow.toISOString().split('T')[0],
   expand: ['attendees'],
 });
 const { data: meetings } = await attrove.meetings.list({   // past meetings with AI summaries
   expand: ['short_summary', 'action_items'],
   limit: 5,
 });
+```
+
+### Response types (snake_case — do not use camelCase)
+
+```typescript
+// query() → QueryResponse
+{ answer: string; used_message_ids: string[]; sources?: { title: string; snippet: string }[] }
+
+// search() → SearchResponse
+{ conversations: Record<string, {                        // keyed by conversation ID
+    conversation_name: string | null;
+    threads: Record<string, SearchThreadMessage[]>;      // keyed by thread ID
+  }>
+}
+// SearchThreadMessage fields:
+//   message_id, sender_name, body_text?, received_at, integration_type, recipient_names[]
+
+// events.list() → EventsPage
+{ data: CalendarEvent[]; pagination: { has_more: boolean } }
+// CalendarEvent fields:
+//   id, title, start_time, end_time, all_day (boolean), description?, location?,
+//   attendees?: { email: string; name?: string; status?: string }[]
+
+// meetings.list() → MeetingsPage
+{ data: Meeting[]; pagination: { has_more: boolean } }
+// Meeting fields:
+//   id, title, start_time, end_time, summary?, short_summary?, provider?,
+//   action_items?: { description: string; assignee?: string }[],
+//   attendees?: { email?: string; name?: string }[]
 ```
 
 ### Error handling

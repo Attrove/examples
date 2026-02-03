@@ -28,15 +28,24 @@ if (!userToken || !userId) {
 
 const attrove = new Attrove({ apiKey: userToken as ApiKeyFormat, userId });
 
+/** Format a Date as YYYY-MM-DD in local timezone (not UTC). */
+function formatLocalDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 async function main(): Promise<void> {
   // Step 1: Get upcoming calendar events
+  const now = new Date();
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   tomorrow.setHours(23, 59, 59, 999);
 
   const { data: events } = await attrove.events.list({
-    startDate: new Date().toISOString(),
-    endDate: tomorrow.toISOString(),
+    startDate: formatLocalDate(now),
+    endDate: formatLocalDate(tomorrow),
     expand: ["attendees", "description"],
   });
 
