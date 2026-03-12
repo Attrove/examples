@@ -9,7 +9,7 @@ This is a zero-code example showing how to connect AI assistants (Claude, Cursor
 | Tool | Parameters | Purpose |
 |------|-----------|---------|
 | `attrove_query` | query (required), integration_ids, include_sources | Ask questions, get AI answers |
-| `attrove_search` | query (required), after_date, before_date, sender_domains, include_body_text | Semantic search |
+| `attrove_search` | query (required), after_date, before_date, sender_domains, include_body_text | Semantic search across messages, meetings, and events |
 | `attrove_integrations` | none | List connected services |
 | `attrove_events` | start_date, end_date, limit | Calendar events with attendees |
 | `attrove_meetings` | start_date, end_date, provider, limit | Meetings with AI summaries |

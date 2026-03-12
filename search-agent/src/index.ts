@@ -35,14 +35,27 @@ async function main(): Promise<void> {
   const response = await attrove.query(query, { includeSources: true });
 
   if (!response.answer) {
-    console.log("No answer was generated. This may mean no relevant messages were found.");
+    console.log("No answer was generated. This may mean no relevant context was found.");
     console.log("Try connecting more integrations or using a different query.");
   } else {
     console.log(response.answer);
   }
 
-  if (response.used_message_ids?.length > 0) {
-    console.log(`\n(Based on ${response.used_message_ids.length} messages)`);
+  const sourceBreakdown: string[] = [];
+  if (response.used_message_ids.length > 0) {
+    const n = response.used_message_ids.length;
+    sourceBreakdown.push(`${n} ${n === 1 ? "message" : "messages"}`);
+  }
+  if (response.used_meeting_ids.length > 0) {
+    const n = response.used_meeting_ids.length;
+    sourceBreakdown.push(`${n} ${n === 1 ? "meeting" : "meetings"}`);
+  }
+  if (response.used_event_ids.length > 0) {
+    const n = response.used_event_ids.length;
+    sourceBreakdown.push(`${n} ${n === 1 ? "event" : "events"}`);
+  }
+  if (sourceBreakdown.length > 0) {
+    console.log(`\n(Based on ${sourceBreakdown.join(", ")})`);
   }
 }
 

@@ -11,7 +11,7 @@ The Attrove MCP server exposes 5 tools that any AI assistant can use to search y
 | Tool | What it does |
 |------|-------------|
 | `attrove_query` | Ask questions, get AI-generated answers with sources |
-| `attrove_search` | Semantic search across email and Slack messages |
+| `attrove_search` | Semantic search across messages, meetings, and calendar events |
 | `attrove_integrations` | List connected services (Gmail, Slack, etc.) |
 | `attrove_events` | List calendar events with attendees |
 | `attrove_meetings` | List meetings with AI summaries and action items |

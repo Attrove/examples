@@ -20,7 +20,9 @@ const response = await attrove.query("what did we promise ACME?", {
   includeSources: true,
 });
 console.log(response.answer);
-console.log(`Based on ${response.used_message_ids.length} messages`);
+console.log(response.used_message_ids); // msg_xxx source IDs
+console.log(response.used_meeting_ids); // mtg_xxx source IDs
+console.log(response.used_event_ids);   // evt_xxx source IDs
 ```
 
 ## Environment Variables

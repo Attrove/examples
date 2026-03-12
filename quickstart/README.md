@@ -72,7 +72,7 @@ Attrove Quickstart
 4. Querying user data...
    Connected integrations: gmail, slack
 
-   Answer: Based on your recent messages...
+   Answer: Based on your recent communications...
 ```
 
 ## How It Works
@@ -116,6 +116,9 @@ const { token } = await admin.users.createConnectToken(userId);
 // 4. Query user's data (after they connect integrations)
 const attrove = new Attrove({ apiKey, userId });
 const response = await attrove.query('What meetings do I have this week?');
+console.log(response.used_message_ids); // msg_xxx IDs
+console.log(response.used_meeting_ids); // mtg_xxx IDs
+console.log(response.used_event_ids);   // evt_xxx IDs
 ```
 
 ## Authentication

@@ -109,14 +109,27 @@ async function main(): Promise<void> {
 
   // Query the user's data
   const response = await attrove.query(
-    "What are my most recent messages about?",
+    "What are my most recent communications about?",
   );
 
   console.log("\n   Answer:");
   console.log(`   ${response.answer}`);
 
+  const sourceBreakdown: string[] = [];
   if (response.used_message_ids.length > 0) {
-    console.log(`\n   (Based on ${response.used_message_ids.length} messages)`);
+    const n = response.used_message_ids.length;
+    sourceBreakdown.push(`${n} ${n === 1 ? "message" : "messages"}`);
+  }
+  if (response.used_meeting_ids.length > 0) {
+    const n = response.used_meeting_ids.length;
+    sourceBreakdown.push(`${n} ${n === 1 ? "meeting" : "meetings"}`);
+  }
+  if (response.used_event_ids.length > 0) {
+    const n = response.used_event_ids.length;
+    sourceBreakdown.push(`${n} ${n === 1 ? "event" : "events"}`);
+  }
+  if (sourceBreakdown.length > 0) {
+    console.log(`\n   (Based on ${sourceBreakdown.join(", ")})`);
   }
 
   printNextSteps();
@@ -162,7 +175,7 @@ async function runDemo(): Promise<void> {
    that needs review by Friday. (3) Customer onboarding — the design team
    shared new mockups in Slack and Lisa requested your sign-off.`);
 
-  console.log("\n   (Based on 23 messages)");
+  console.log("\n   (Based on 23 messages, 2 meetings, 1 event)");
 
   printNextSteps();
   console.log("To run with real data, add your credentials to .env.\n");

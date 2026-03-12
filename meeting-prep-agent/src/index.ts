@@ -95,7 +95,7 @@ async function main(): Promise<void> {
         console.log("");
       }
 
-      // Step 4: Query for relevant context across email and Slack
+      // Step 4: Query for relevant context across messages, meetings, and calendar events
       const prompt = attendeeNames
         ? `What do I need to know before my meeting "${event.title}" with ${attendeeNames}? Include any recent email threads, Slack messages, open action items, or decisions involving these people.`
         : `What do I need to know before my meeting "${event.title}"? Include any recent context, action items, or decisions related to this topic.`;

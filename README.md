@@ -2,7 +2,7 @@
 <!-- Synced sections: authentication, SDK methods, MCP tools, error handling. This file adds the examples table and getting-started guide specific to the public repo. -->
 # Attrove Examples
 
-Connect your users' Gmail, Slack, Google Calendar, Outlook, and Google Meet — then query their data with natural language via a single API call.
+Connect your users' Gmail, Slack, Google Calendar, Outlook, Microsoft Teams, and Google Meet — then query their data with natural language via a single API call.
 
 > **Attrove is Plaid for productivity apps.** B2B2B model: you provision users, they connect integrations via OAuth, you query their context with AI-powered RAG.
 
@@ -21,6 +21,20 @@ console.log(response.answer);
 | [`meeting-prep-agent/`](./meeting-prep-agent) | AI meeting prep — upcoming events, past meetings, context brief | ~160 |
 | [`search-agent/`](./search-agent) | Minimal Q&A — one API call to search across all integrations | ~65 |
 | [`mcp-demo/`](./mcp-demo) | Zero-code MCP setup for Claude Desktop, Cursor, ChatGPT, Claude Code | config only |
+
+## Quick Start (Personal Use / Developer Testing)
+
+To use Attrove with your own email, Slack, and calendar:
+
+1. **Sign up free** at [connect.attrove.com](https://connect.attrove.com/auth/signup) (no credit card)
+2. **Connect integrations** — the dashboard quickstart walks you through connecting Gmail, Slack, Calendar, etc.
+3. **Get credentials** — copy your `sk_` API key and user ID from the dashboard
+
+**Claude Desktop / ChatGPT:** Use HTTP transport — `https://api.attrove.com/mcp`. OAuth is automatic, no manual credentials needed.
+
+**Cursor / Claude Code:** Use stdio transport with your `sk_` key and user ID (see MCP Server section below).
+
+**Building an integration?** Follow the Getting Started guide below.
 
 ## Getting Started
 
@@ -80,9 +94,11 @@ await attrove.search('...');                   // Semantic search
 await attrove.events.list({ ... });            // Calendar events
 await attrove.meetings.list({ ... });          // Past meetings
 await attrove.integrations.list();             // Connected services
+await attrove.entities.list();                 // People the user communicates with
+await attrove.entities.relationships();        // Co-occurrence network
 ```
 
-**Methods that do NOT exist:** `brief()`, `entity()`, `thread()` — these will cause compile errors.
+**Methods that do NOT exist:** `brief()` and `thread()` — these will cause compile errors. For thread analysis, use `threads.discover()` and `threads.analyze()`.
 
 **Response properties are snake_case** (e.g., `start_time`, `sender_name`, `body_text`). Input params are camelCase. `search()` returns conversations as a `Record<string, ...>` (object), not an array — use `Object.values()` to iterate.
 

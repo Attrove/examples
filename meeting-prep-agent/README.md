@@ -1,12 +1,12 @@
 # Meeting Prep Agent
 
-Build a meeting prep agent in ~160 lines of TypeScript. Searches your real Gmail, Slack, and Calendar to generate a context brief before every meeting.
+Build a meeting prep agent in ~160 lines of TypeScript. Searches your real Gmail, Slack, meetings, and calendar context to generate a brief before every meeting.
 
 ## What it does
 
 1. Fetches your upcoming calendar events (next 24 hours)
 2. Finds past meetings with the same attendees
-3. Queries your email and Slack for relevant context
+3. Queries your communication context (messages, meetings, and events)
 4. Outputs a prep brief with action items, recent threads, and key decisions
 
 ## Setup
@@ -86,7 +86,7 @@ Three SDK methods. Real data. Ship it.
 |--------|---------|
 | `attrove.events.list()` | Get upcoming calendar events with attendees |
 | `attrove.meetings.list()` | Find past meetings with same people |
-| `attrove.query()` | RAG query across email, Slack, and calendar |
+| `attrove.query()` | RAG query across messages, meetings, and calendar events |
 
 ## B2B2B Integration
 

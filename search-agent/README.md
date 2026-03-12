@@ -29,7 +29,7 @@ you committed to delivering the API integration by end of Q1. Mike
 confirmed engineering capacity in the #acme-project Slack channel
 and flagged a dependency on the auth migration finishing first.
 
-(Based on 8 messages)
+(Based on 8 messages, 1 meeting, 1 event)
 ```
 
 ## The Code
@@ -43,9 +43,12 @@ const response = await attrove.query("what did we promise ACME?", {
   includeSources: true,
 });
 console.log(response.answer);
+console.log(response.used_message_ids); // msg_xxx source IDs
+console.log(response.used_meeting_ids); // mtg_xxx source IDs
+console.log(response.used_event_ids);   // evt_xxx source IDs
 ```
 
-That's it. One call. AI-powered answers from your real email and Slack.
+That's it. One call. AI-powered answers from your real messages, meetings, and calendar context.
 
 ## Resources
 
