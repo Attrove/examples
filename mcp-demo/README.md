@@ -1,12 +1,12 @@
 # MCP Demo — Zero Code
 
-Give Claude, Cursor, or ChatGPT access to your real email, Slack, and calendar. No code required.
+Give Codex, Claude, Cursor, or ChatGPT access to your real email, Slack, and calendar. No code required.
 
-> **Important:** The MCP connector methods below (Claude Desktop, ChatGPT) let you query **your own account only**. When you authenticate, you're granting access to your own connected integrations — not your users' data. This is a security and privacy feature. To query your users' data programmatically, use the [SDK examples](../meeting-prep-agent) with the B2B2B provisioning flow.
+> **Important:** The MCP connector methods below let you query **your own account only**. When you authenticate, you're granting access to your own connected integrations — not your users' data. This is a security and privacy feature. To query your users' data programmatically, use the [SDK examples](../meeting-prep-agent) with the B2B2B provisioning flow.
 
 ## What is this?
 
-The Attrove MCP server exposes 5 tools that any AI assistant can use to search your communications:
+The Attrove MCP server exposes 20 tools that any AI assistant can use to search your communications and monitor goals:
 
 | Tool | What it does |
 |------|-------------|
@@ -15,74 +15,96 @@ The Attrove MCP server exposes 5 tools that any AI assistant can use to search y
 | `attrove_integrations` | List connected services (Gmail, Slack, etc.) |
 | `attrove_events` | List calendar events with attendees |
 | `attrove_meetings` | List meetings with AI summaries and action items |
+| `attrove_notes` | List saved notes, decisions, and observations |
+| `attrove_push_note` | Save a note into user context for future agents |
+| `attrove_push_meeting` | Save a meeting transcript or summary into user context |
+| `attrove_delete_meeting` | Reversibly archive a pushed meeting by `id` or `external_id` |
+| `attrove_delete_note` | Reversibly archive a note by `id` or `external_id` |
+| `attrove_create_goal` | Create an outcome goal to monitor |
+| `attrove_list_goals` | List goals by lifecycle or health |
+| `attrove_get_goal_status` | Inspect a goal and latest status snapshot |
+| `attrove_evaluate_goal` | Queue a manual goal evaluation |
+| `attrove_add_goal_note` | Attach a note to a goal |
+| `attrove_confirm_goal_status` | Manually confirm or override goal status |
+| `attrove_goal_events` | Poll goal lifecycle transitions with cursor metadata |
+| `attrove_acknowledge_goal` | Acknowledge expected silence; suppress silence escalation until a horizon |
+| `attrove_clear_goal_acknowledgment` | Clear an active acknowledgment and resume silence monitoring |
+| `attrove_draft_goal_follow_up` | Draft an evidence-grounded follow-up email for a quiet goal (read-only) |
 
-## Setup: Claude Desktop Connector (Recommended)
+## Setup: Hosted MCP (Recommended)
 
-Claude Desktop supports Attrove as a remote MCP connector over HTTP. Authentication is handled automatically — no tokens or env vars to configure.
+Hosted MCP is the default for Codex, Claude Desktop, Cursor, Claude Code, and other remote-capable clients. Authentication is handled automatically with OAuth. No `sk_` secrets or env vars are required for the default path.
 
-1. Open Claude Desktop
-2. Go to **Settings > Connectors** (or click the plug icon)
-3. Click **Add Connector**
-4. Enter the MCP endpoint URL:
-   ```
-   https://api.attrove.com/mcp
-   ```
-5. Claude Desktop will discover the auth endpoint automatically and prompt you to sign in with your Attrove account
-6. Once authenticated, the 5 Attrove tools appear in your tools menu
-
-That's it. Ask Claude a question like "What meetings do I have this week?" and it will call the Attrove tools on your behalf.
-
-## Setup: ChatGPT
-
-ChatGPT also connects via the hosted HTTP endpoint with automatic auth discovery.
-
-1. Open ChatGPT Settings > **Connectors**
-2. Click **Add Connector**
-3. Enter the MCP endpoint URL:
-   ```
-   https://api.attrove.com/mcp
-   ```
-4. ChatGPT will discover the auth endpoint via `/.well-known/oauth-protected-resource` and prompt you to sign in
-
-Both Claude Desktop and ChatGPT use OAuth 2.1 — you sign in once and your session stays active.
-
-## Setup: Cursor (stdio)
-
-Cursor uses the local stdio transport. Add this to your Cursor MCP config:
-
-1. Open Cursor Settings (`Cmd+,`)
-2. Navigate to **Features > MCP Servers**
-3. Add the config:
-
-```json
-{
-  "mcpServers": {
-    "attrove": {
-      "command": "npx",
-      "args": ["@attrove/mcp"],
-      "env": {
-        "ATTROVE_SECRET_KEY": "sk_...",
-        "ATTROVE_USER_ID": "your-user-uuid"
-      }
-    }
-  }
-}
-```
-
-> **Note:** The stdio transport requires your `sk_` user token and user ID as env vars. The env var is named `ATTROVE_SECRET_KEY` by the MCP package, but the value is your per-user `sk_` token — **not** your `attrove_` API key.
-
-4. Restart Cursor
-
-## Setup: Claude Code (Terminal)
+### Codex
 
 ```bash
-export ATTROVE_SECRET_KEY="sk_..."
-export ATTROVE_USER_ID="your-user-uuid"
+npx @attrove/cli install codex
+codex mcp login attrove
 ```
 
-Then ask Claude Code questions about your email, Slack, and calendar directly.
+Restart Codex or reload MCP tool discovery if Attrove is not visible. The raw hosted server exposes tools such as `attrove_notes`, `attrove_create_goal`, and `attrove_list_goals`; `mcp__codex_apps__attrove` tools come from the OpenAI Apps connector, not the raw hosted MCP server.
 
-> Same note as Cursor: `ATTROVE_SECRET_KEY` expects the `sk_` user token.
+### Claude Desktop
+
+```bash
+npx @attrove/cli install claude-desktop
+```
+
+Then open Claude Desktop and finish OAuth when prompted.
+
+### Cursor
+
+```bash
+npx @attrove/cli install cursor
+```
+
+Then open Cursor and finish OAuth when prompted.
+
+### Claude Code
+
+```bash
+npx @attrove/cli install claude-code
+```
+
+This defaults to project scope and writes `.mcp.json`. Open Claude Code and finish OAuth when prompted.
+
+### ChatGPT
+
+If ChatGPT asks for a manual MCP URL, use:
+
+```bash
+https://api.attrove.com/mcp
+```
+
+ChatGPT should discover the OAuth flow automatically when it follows MCP discovery.
+
+## Verify the First Useful Answer
+
+After OAuth completes, do not stop at "server connected." Ask:
+
+```text
+Use Attrove to list my connected integrations.
+```
+
+You should see at least one connected source. Then ask:
+
+```text
+What needs my attention this week? Include the source messages or meetings you used.
+```
+
+That second prompt confirms Attrove can retrieve useful context and cite the sources behind the answer.
+
+## Setup: Advanced Local Fallback
+
+Use this only if you explicitly want the local stdio server:
+
+```bash
+npx @attrove/cli login
+npx @attrove/cli local install claude-code
+npx @attrove/cli connect gmail
+```
+
+You can also run `@attrove/mcp` manually with `ATTROVE_SECRET_KEY` and `ATTROVE_USER_ID` if you need direct env-based stdio config.
 
 ## Try these prompts
 
@@ -93,6 +115,9 @@ Once connected via any method above:
 - "Summarize my last meeting with the engineering team"
 - "Find all emails from acme.com about the product launch"
 - "What are my open action items?"
+- "Create a goal to track the ACME renewal and alert me if it goes quiet for 5 days."
+- "List my active at-risk goals and explain what evidence changed."
+- "Show goal events since yesterday."
 
 ## Example Conversations
 
@@ -124,18 +149,18 @@ Once connected via any method above:
 
 ```
 ┌──────────────────┐     ┌─────────────┐     ┌─────────────┐
-│  Claude/Cursor/  │────▶│   Attrove   │────▶│   Attrove   │
-│    ChatGPT       │     │  MCP Server │     │    API      │
+│ Codex/Claude/    │────▶│   Attrove   │────▶│   Attrove   │
+│ Cursor/ChatGPT   │     │  MCP Server │     │    API      │
 └──────────────────┘     └─────────────┘     └─────────────┘
        │                       │                     │
        │ Natural language      │ Tool calls          │ RAG + Search
-       │ questions             │ (5 tools)           │ across Gmail,
+       │ questions             │ (20 tools)          │ across Gmail,
        │                       │                     │ Slack, Calendar
 ```
 
-**HTTP connectors** (Claude Desktop, ChatGPT): Connect to `https://api.attrove.com/mcp`. Auth is handled via OAuth 2.1 — you sign in and your session is managed automatically. You query your own connected accounts.
+**Hosted MCP** (Codex, Claude Desktop, Cursor, Claude Code, ChatGPT): Connects to `https://api.attrove.com/mcp`. Auth is handled via OAuth 2.1. You sign in once and query your own connected accounts.
 
-**Stdio transport** (Cursor, Claude Code): Runs `npx @attrove/mcp` locally. Requires `sk_` user token and user ID as env vars. Used for development and testing.
+**Advanced local stdio fallback**: Runs `npx @attrove/mcp` locally. Use it only when you explicitly need local credential-backed MCP.
 
 ## Who can see what?
 
@@ -146,6 +171,7 @@ This is distinct from the SDK's B2B2B flow, where a partner server provisions en
 ## Resources
 
 - [@attrove/mcp on npm](https://www.npmjs.com/package/@attrove/mcp)
-- [SDK Documentation](https://docs.attrove.com/sdks/typescript)
+- [SDK Documentation](https://attrove.com/docs/sdk)
+- [Goal Monitor](../goal-monitor) (Goals SDK workflow)
 - [Meeting Prep Agent](../meeting-prep-agent) (build it into your app)
 - [Quickstart](../quickstart) (full B2B2B provisioning flow)

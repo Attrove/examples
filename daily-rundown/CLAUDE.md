@@ -14,7 +14,7 @@ Only working SDK methods are used (no stubbed methods):
 | `attrove.query()` | AI-generated daily digest |
 
 ### Unavailable Methods
-- `attrove.brief()`, `attrove.entity()`, `attrove.thread()` — do not exist in the SDK yet (will cause a compile error)
+- `attrove.brief()`, `attrove.entity()`, `attrove.thread()` — do not exist in the SDK yet (will cause a compile error). Use `attrove.threads.discover()`, `attrove.threads.analyze()`, or `attrove.threads.messages(threadId)` for thread workflows.
 
 ## Key Patterns
 

@@ -1,12 +1,18 @@
 This is a zero-code example — config files and documentation only. No source code.
 
-It shows how to connect Claude Desktop, Cursor, ChatGPT, and Claude Code to Attrove via MCP.
+It shows how to connect Codex, Claude Code, Cursor, Claude Desktop, and ChatGPT to Attrove via MCP.
 
 Two connection methods:
-1. HTTP (Claude Desktop, ChatGPT): connect to https://api.attrove.com/mcp — OAuth is automatic
-2. Stdio (Cursor, Claude Code): npx @attrove/mcp with ATTROVE_SECRET_KEY (sk_ token) and ATTROVE_USER_ID env vars
 
-MCP has 5 tools: attrove_query, attrove_search, attrove_integrations, attrove_events, attrove_meetings.
+1. Hosted remote MCP (recommended) — `npx @attrove/cli install codex`, `npx @attrove/cli install claude-code`, `npx @attrove/cli install cursor`, `npx @attrove/cli install claude-desktop`, or point remote-capable clients (ChatGPT, manual) at `https://api.attrove.com/mcp`. OAuth is automatic. For Codex, run `codex mcp login attrove` after install; raw hosted tools include `attrove_notes`, `attrove_create_goal`, and `attrove_list_goals`, while `mcp__codex_apps__attrove` is the OpenAI Apps connector.
+2. Advanced local stdio fallback — `npx @attrove/cli login`, `npx @attrove/cli local install claude-code`, then `npx @attrove/cli connect gmail`, or run `npx @attrove/mcp` manually with `ATTROVE_SECRET_KEY` (sk_ token) and `ATTROVE_USER_ID` env vars. Use only when you explicitly need stdio.
+
+Verify the first useful answer:
+
+1. Ask: "Use Attrove to list my connected integrations."
+2. Ask: "What needs my attention this week? Include the source messages or meetings you used."
+
+The Attrove MCP server exposes 20 tools: attrove_query, attrove_search, attrove_integrations, attrove_events, attrove_meetings, attrove_notes, attrove_push_note, attrove_push_meeting, attrove_delete_meeting, attrove_delete_note, attrove_create_goal, attrove_list_goals, attrove_get_goal_status, attrove_evaluate_goal, attrove_add_goal_note, attrove_confirm_goal_status, attrove_goal_events, attrove_acknowledge_goal, attrove_clear_goal_acknowledgment, attrove_draft_goal_follow_up.
 There is NO attrove_brief tool.
 
 Access scope: MCP connectors let you query YOUR OWN account only — not end users' data.

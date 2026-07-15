@@ -3,47 +3,45 @@
  *
  * This example demonstrates the full B2B2B flow:
  * 1. Provision a user (server-side, using admin credentials)
- * 2. Generate a connect token for OAuth
+ * 2. Create a durable connect session for OAuth
  * 3. Query user data (after they connect integrations)
  *
  * Run with: npm start
  * Demo mode: npm start -- --demo
  */
 
-import "dotenv/config";
-import * as readline from "readline";
+import 'dotenv/config';
+import * as readline from 'readline';
 import {
   Attrove,
   type ApiKeyFormat,
   AuthenticationError,
   RateLimitError,
   isAttroveError,
-} from "@attrove/sdk";
+} from '@attrove/sdk';
 
 const demoMode =
-  process.argv.includes("--demo") || process.env.DEMO_MODE === "true";
+  process.argv.includes('--demo') || process.env.DEMO_MODE === 'true';
 
 // Validate environment variables (skip in demo mode)
 const clientId = process.env.ATTROVE_CLIENT_ID;
 const clientSecret = process.env.ATTROVE_CLIENT_SECRET;
 
 if (!demoMode && (!clientId || !clientSecret)) {
-  console.error("Missing required environment variables.");
-  console.error("Copy .env.example to .env and add your credentials:");
-  console.error("  cp .env.example .env");
-  console.error("");
-  console.error(
-    "Get your credentials at: https://connect.attrove.com/settings/api-keys",
-  );
-  console.error("");
-  console.error("Or run with --demo to see example output:");
-  console.error("  npm start -- --demo");
+  console.error('Missing required environment variables.');
+  console.error('Copy .env.example to .env and add your credentials:');
+  console.error('  cp .env.example .env');
+  console.error('');
+  console.error('Get your credentials at: https://connect.attrove.com/keys');
+  console.error('');
+  console.error('Or run with --demo to see example output:');
+  console.error('  npm start -- --demo');
   process.exit(1);
 }
 
 async function main(): Promise<void> {
-  console.log("\nAttrove Quickstart\n");
-  console.log("==================\n");
+  console.log('\nAttrove Quickstart\n');
+  console.log('==================\n');
 
   if (demoMode) {
     await runDemo();
@@ -68,68 +66,83 @@ async function main(): Promise<void> {
   console.log(`   User created: ${userId}`);
   console.log(`   API Key: ${apiKey.slice(0, 15)}...`);
 
-  // Step 3: Generate a connect token for OAuth flow
-  console.log("\n2. Generating connect token...");
-  const { token: connectToken, expires_at } =
-    await admin.users.createConnectToken(userId);
+  // Step 3: Create a durable connect session for OAuth flow
+  console.log('\n2. Creating durable connect session...');
+  const connectSession = await admin.users.createConnectSession(userId, {
+    provider: 'gmail',
+    display: 'popup',
+    includeInstall: true,
+  });
 
-  const connectUrl = `https://connect.attrove.com/integrations/connect?token=${connectToken}&user_id=${userId}`;
-  console.log(`   Token expires: ${expires_at}`);
-  console.log(`\n   Connect URL (open in browser):`);
-  console.log(`   ${connectUrl}`);
+  console.log(`   Session expires: ${connectSession.expires_at}`);
+  console.log(`\n   Activation URL (open in browser):`);
+  console.log(`   ${connectSession.activation_url}`);
+  if (connectSession.cli?.command) {
+    console.log(`\n   Terminal handoff:`);
+    console.log(`   ${connectSession.cli.command}`);
+  } else {
+    // cli + install are returned together; null here means includeInstall
+    // was false (or your client isn't configured for CLI handoff).
+    console.log(
+      `\n   (Terminal/agent handoff not included — pass { includeInstall: true } when creating the session.)`,
+    );
+  }
 
   // Wait for user to connect an integration
   console.log(
-    "\n3. Open the URL above to connect Gmail, Slack, or another integration.",
+    '\n3. Open the activation URL to connect Gmail, Slack, or another integration.',
   );
-  console.log("   Once connected, press Enter to continue...\n");
+  console.log('   Once connected, press Enter to continue...\n');
 
   await waitForEnter();
 
   // Step 4: Query user data
-  console.log("4. Querying user data...\n");
+  console.log('4. Querying user data...\n');
 
-  // Cast apiKey - the SDK returns keys with 'sk_' prefix but types it as string
+  // CreateUserResponse.apiKey is typed as plain `string`, but the Attrove
+  // client wants the branded `ApiKeyFormat`. The cast bridges the two; do
+  // not remove the brand or widen the constructor's parameter.
   const attrove = new Attrove({ apiKey: apiKey as ApiKeyFormat, userId });
 
   // First, check what integrations are connected
   const integrations = await attrove.integrations.list();
 
   if (integrations.length === 0) {
-    console.log("   No integrations connected yet.");
+    console.log('   No integrations connected yet.');
     console.log(
-      "   Connect Gmail, Slack, or another service, then run this script again.",
+      '   Connect Gmail, Slack, or another service, then run this script again.',
     );
     return;
   }
 
   console.log(
-    `   Connected integrations: ${integrations.map((i) => i.provider).join(", ")}`,
+    `   Connected integrations: ${integrations.map((i) => i.provider).join(', ')}`,
   );
 
   // Query the user's data
   const response = await attrove.query(
-    "What are my most recent communications about?",
+    'What needs my attention this week? Include the source messages or meetings you used.',
+    { includeSources: true },
   );
 
-  console.log("\n   Answer:");
+  console.log('\n   Answer:');
   console.log(`   ${response.answer}`);
 
   const sourceBreakdown: string[] = [];
   if (response.used_message_ids.length > 0) {
     const n = response.used_message_ids.length;
-    sourceBreakdown.push(`${n} ${n === 1 ? "message" : "messages"}`);
+    sourceBreakdown.push(`${n} ${n === 1 ? 'message' : 'messages'}`);
   }
   if (response.used_meeting_ids.length > 0) {
     const n = response.used_meeting_ids.length;
-    sourceBreakdown.push(`${n} ${n === 1 ? "meeting" : "meetings"}`);
+    sourceBreakdown.push(`${n} ${n === 1 ? 'meeting' : 'meetings'}`);
   }
   if (response.used_event_ids.length > 0) {
     const n = response.used_event_ids.length;
-    sourceBreakdown.push(`${n} ${n === 1 ? "event" : "events"}`);
+    sourceBreakdown.push(`${n} ${n === 1 ? 'event' : 'events'}`);
   }
   if (sourceBreakdown.length > 0) {
-    console.log(`\n   (Based on ${sourceBreakdown.join(", ")})`);
+    console.log(`\n   (Based on ${sourceBreakdown.join(', ')})`);
   }
 
   printNextSteps();
@@ -140,32 +153,36 @@ async function main(): Promise<void> {
  * Lets developers see what they'll get before signing up.
  */
 async function runDemo(): Promise<void> {
-  console.log("[DEMO MODE]\n");
+  console.log('[DEMO MODE]\n');
 
   // Step 1: Provision
-  console.log("1. Provisioning user: demo@yourapp.com");
+  console.log('1. Provisioning user: demo@yourapp.com');
   await delay(300);
-  console.log("   User created: 2322ac54-9642-4a9e-a504-b0d227d17fa7");
-  console.log("   API Key: sk_live_demo_abc...");
+  console.log('   User created: 2322ac54-9642-4a9e-a504-b0d227d17fa7');
+  console.log('   API Key: sk_live_demo_abc...');
 
-  // Step 2: Connect token
-  console.log("\n2. Generating connect token...");
+  // Step 2: Connect session
+  console.log('\n2. Creating durable connect session...');
   await delay(200);
-  console.log("   Token expires: 2026-01-30T10:10:00.000Z");
-  console.log("\n   Connect URL (open in browser):");
+  console.log('   Session expires: 2026-01-30T10:10:00.000Z');
+  console.log('\n   Activation URL (open in browser):');
   console.log(
-    "   https://connect.attrove.com/integrations/connect?token=pit_demo_token&user_id=2322ac54-...",
+    '   https://connect.attrove.com/integrations/connect?session=8f4a2c1b-...',
+  );
+  console.log('\n   Terminal handoff:');
+  console.log(
+    '   npx @attrove/cli connect --session 8f4a2c1b-0000-4000-9000-000000000000',
   );
 
   // Step 3: Simulated integration connection
   console.log(
-    "\n3. [DEMO] Skipping OAuth — simulating connected integrations.\n",
+    '\n3. [DEMO] Skipping OAuth — simulating connected integrations.\n',
   );
   await delay(500);
 
   // Step 4: Query
-  console.log("4. Querying user data...\n");
-  console.log("   Connected integrations: gmail, slack");
+  console.log('4. Querying user data...\n');
+  console.log('   Connected integrations: gmail, slack');
   await delay(800);
 
   console.log(`\n   Answer:
@@ -175,10 +192,10 @@ async function runDemo(): Promise<void> {
    that needs review by Friday. (3) Customer onboarding — the design team
    shared new mockups in Slack and Lisa requested your sign-off.`);
 
-  console.log("\n   (Based on 23 messages, 2 meetings, 1 event)");
+  console.log('\n   (Based on 23 messages, 2 meetings, 1 event)');
 
   printNextSteps();
-  console.log("To run with real data, add your credentials to .env.\n");
+  console.log('To run with real data, add your credentials to .env.\n');
 }
 
 function delay(ms: number): Promise<void> {
@@ -186,12 +203,12 @@ function delay(ms: number): Promise<void> {
 }
 
 function printNextSteps(): void {
-  console.log("\n==================");
-  console.log("Quickstart complete!\n");
-  console.log("Next steps:");
-  console.log("- Explore the SDK: https://docs.attrove.com/sdks/typescript");
-  console.log("- Try the MCP server: npx @attrove/mcp");
-  console.log("- View the API reference: https://docs.attrove.com/api\n");
+  console.log('\n==================');
+  console.log('Quickstart complete!\n');
+  console.log('Next steps:');
+  console.log('- Explore the SDK: https://attrove.com/docs/sdk');
+  console.log('- Try hosted MCP: npx @attrove/cli install claude-code');
+  console.log('- View the API reference: https://attrove.com/docs/api-reference\n');
 }
 
 function waitForEnter(): Promise<void> {
@@ -205,7 +222,7 @@ function waitForEnter(): Promise<void> {
   });
 
   return new Promise((resolve) => {
-    rl.question("", () => {
+    rl.question('', () => {
       rl.close();
       resolve();
     });
@@ -214,13 +231,11 @@ function waitForEnter(): Promise<void> {
 
 main().catch((err: unknown) => {
   if (err instanceof AuthenticationError) {
-    console.error("Authentication Error:", err.message);
-    console.error("  Check your ATTROVE_CLIENT_ID and ATTROVE_CLIENT_SECRET");
-    console.error(
-      "  Get credentials at: https://connect.attrove.com/settings/api-keys",
-    );
+    console.error('Authentication Error:', err.message);
+    console.error('  Check your ATTROVE_CLIENT_ID and ATTROVE_CLIENT_SECRET');
+    console.error('  Get credentials at: https://connect.attrove.com/keys');
   } else if (err instanceof RateLimitError) {
-    console.error("Rate Limited:", err.message);
+    console.error('Rate Limited:', err.message);
     const waitTime = err.retryAfter ?? 60;
     console.error(`  Please wait ${waitTime} seconds before retrying`);
   } else if (isAttroveError(err)) {
@@ -229,12 +244,12 @@ main().catch((err: unknown) => {
       console.error(`  HTTP Status: ${err.status}`);
     }
   } else if (err instanceof Error) {
-    console.error("Error:", err.message);
+    console.error('Error:', err.message);
     if (err.stack) {
       console.error(err.stack);
     }
   } else {
-    console.error("Unknown error:", err);
+    console.error('Unknown error:', err);
   }
   process.exit(1);
 });

@@ -1,7 +1,7 @@
 {
-  "name": "attrove-search-agent",
+  "name": "attrove-goal-monitor",
   "version": "1.0.0",
-  "description": "Ask your comms anything — AI-powered Q&A in one API call",
+  "description": "Create and inspect Attrove outcome goals with the TypeScript SDK",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {

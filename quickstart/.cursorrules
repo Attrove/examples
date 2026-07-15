@@ -12,8 +12,8 @@ SDK rules:
 Authentication flow:
 1. Partner uses client_id + client_secret to create users
 2. admin.users.create() returns sk_ API key per user
-3. admin.users.createConnectToken() returns pit_ token (10 min, single-use)
-4. User visits connect URL to authorize Gmail/Slack/etc via OAuth
+3. admin.users.createConnectSession() returns activation_url + optional CLI/MCP handoff artifacts
+4. User visits activation_url to authorize Gmail/Slack/etc via OAuth
 5. Partner queries user data with sk_ token
 
 This example has a --demo flag that shows mock output without credentials.

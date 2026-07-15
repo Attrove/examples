@@ -52,7 +52,8 @@ That's it. One call. AI-powered answers from your real messages, meetings, and c
 
 ## Resources
 
-- [SDK Documentation](https://docs.attrove.com/sdks/typescript)
+- [SDK Documentation](https://attrove.com/docs/sdk)
+- [Goal Monitor](../goal-monitor) (outcome monitoring with Goals)
 - [Meeting Prep Agent](../meeting-prep-agent) (event-driven meeting briefs)
 - [Daily Rundown](../daily-rundown) (scheduled digest with email delivery)
 - [Quickstart](../quickstart) (full B2B2B provisioning flow)

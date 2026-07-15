@@ -10,7 +10,7 @@ Minimal example: ask your comms anything in ~65 lines using the Attrove SDK. One
 | `attrove.query()` | AI-powered Q&A across all connected integrations |
 
 ### Unavailable Methods
-- `attrove.brief()`, `attrove.entity()`, `attrove.thread()` — do not exist in the SDK yet (will cause a compile error)
+- `attrove.brief()`, `attrove.entity()`, `attrove.thread()` — do not exist in the SDK yet (will cause a compile error). Use `attrove.threads.discover()`, `attrove.threads.analyze()`, or `attrove.threads.messages(threadId)` for thread workflows.
 
 ## Key Patterns
 

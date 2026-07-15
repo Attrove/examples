@@ -98,6 +98,6 @@ Run daily with cron:
 
 ## Resources
 
-- [SDK Documentation](https://docs.attrove.com/sdks/typescript)
+- [SDK Documentation](https://attrove.com/docs/sdk)
 - [Meeting Prep Agent](../meeting-prep-agent) (event-driven pattern)
 - [Search Agent](../search-agent) (minimal example)

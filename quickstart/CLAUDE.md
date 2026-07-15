@@ -11,7 +11,7 @@ This is the Attrove quickstart repository demonstrating the B2B2B integration fl
 
 ## Authentication Flow
 
-Attrove uses a B2B2B model with three token types:
+Attrove uses a B2B2B model with durable connect sessions:
 
 ```
 Partner Server (you)          Attrove API              End User
@@ -19,10 +19,10 @@ Partner Server (you)          Attrove API              End User
        |-- client_id/secret ------>|                       |
        |<-- sk_ API key -----------|                       |
        |                           |                       |
-       |-- create connect token -->|                       |
-       |<-- pit_ token ------------|                       |
-       |                           |                       |
-       |-- pit_ token via URL -----|---------------------> |
+      |-- create connect session ->|                       |
+      |<-- activation_url + CLI ---|                       |
+      |                           |                       |
+      |-- activation_url ----------|---------------------> |
        |                           |<-- OAuth consent ---- |
        |                           |-- sync data --------> |
        |                           |                       |
@@ -47,15 +47,18 @@ const { id: userId, apiKey } = await admin.users.create({
 });
 ```
 
-### Generate a connect token for OAuth
+### Create a connect session for OAuth
 
 ```typescript
-const { token: connectToken, expires_at } = await admin.users.createConnectToken(userId);
-// Token expires in 10 minutes (expires_at is ISO 8601 timestamp)
-// Generate a new token if the user hasn't connected by then
+const session = await admin.users.createConnectSession(userId, {
+  provider: 'gmail',
+  display: 'popup',
+  includeInstall: true,
+});
 
 // Send this URL to the end user to connect their integrations
-const connectUrl = `https://connect.attrove.com/integrations/connect?token=${connectToken}&user_id=${userId}`;
+const connectUrl = session.activation_url;
+// Terminal/agent handoff: session.cli?.command
 ```
 
 ### Query user data (after integration connected)
@@ -63,8 +66,11 @@ const connectUrl = `https://connect.attrove.com/integrations/connect?token=${con
 ```typescript
 const attrove = new Attrove({ apiKey, userId });
 
-// Simple query
-const response = await attrove.query('What meetings do I have this week?');
+// First useful query
+const response = await attrove.query(
+  'What needs my attention this week? Include the source messages or meetings you used.',
+  { includeSources: true },
+);
 console.log(response.answer);
 
 // With options
@@ -134,6 +140,6 @@ try {
 
 ## Links
 
-- [SDK Documentation](https://docs.attrove.com/sdks/typescript)
-- [API Reference](https://docs.attrove.com/api)
+- [SDK Documentation](https://attrove.com/docs/sdk)
+- [API Reference](https://attrove.com/docs/api-reference)
 - [MCP Server](https://www.npmjs.com/package/@attrove/mcp)

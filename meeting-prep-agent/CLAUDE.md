@@ -16,7 +16,7 @@ Only working SDK methods are used (no stubbed methods):
 ### Unavailable Methods
 - `attrove.brief()` — does not exist in the SDK yet (will cause a compile error)
 - `attrove.entity()` — does not exist in the SDK yet (will cause a compile error)
-- `attrove.thread()` — does not exist in the SDK yet (will cause a compile error)
+- `attrove.thread()` — does not exist in the SDK yet (will cause a compile error). Use `attrove.threads.discover()`, `attrove.threads.analyze()`, or `attrove.threads.messages(threadId)` instead.
 
 ## Key Patterns
 
@@ -48,7 +48,11 @@ To integrate into your own app, add provisioning:
 ```typescript
 const admin = Attrove.admin({ clientId, clientSecret });
 const { id, apiKey: userToken } = await admin.users.create({ email });
-const { token } = await admin.users.createConnectToken(id);
+const session = await admin.users.createConnectSession(id, {
+  provider: 'gmail',
+  includeInstall: true,
+});
+console.log(session.activation_url);
 ```
 
 See `../quickstart` for the full flow.

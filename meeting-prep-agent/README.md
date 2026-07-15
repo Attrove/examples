@@ -98,9 +98,13 @@ import { Attrove } from '@attrove/sdk';
 // Server-side: provision users
 const admin = Attrove.admin({ clientId, clientSecret });
 const { id, apiKey: userToken } = await admin.users.create({ email: 'user@example.com' });
-const { token } = await admin.users.createConnectToken(id);
+const session = await admin.users.createConnectSession(id, {
+  provider: 'gmail',
+  includeInstall: true,
+});
 
 // Send connectUrl to user → they connect Gmail/Slack → you query their context
+console.log(session.activation_url);
 const attrove = new Attrove({ apiKey: userToken, userId: id });
 const brief = await attrove.query('What do I need to know before my next meeting?');
 ```
@@ -109,6 +113,6 @@ See the [quickstart](../quickstart) for the full B2B2B flow.
 
 ## Resources
 
-- [SDK Documentation](https://docs.attrove.com/sdks/typescript)
-- [API Reference](https://docs.attrove.com/api)
+- [SDK Documentation](https://attrove.com/docs/sdk)
+- [API Reference](https://attrove.com/docs/api-reference)
 - [MCP Server](https://www.npmjs.com/package/@attrove/mcp) (zero-code version)
